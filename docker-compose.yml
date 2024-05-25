@@ -1,0 +1,37 @@
+# Una imagen de Jenkins configurada automáticamente con JCasC, con los plugins recomendados por
+# la comunidad instalados, y configuraciones básicas de autorización aplicadas.
+
+# El hostname del contenedor es importante porque Docker lo utiliza para editar /etc/hosts y 
+# hacerse alcanzable a sí mismo a través de dicho nombre. Por tanto, si están conforma con que 
+# la URL de Jenkins dentro del contenedor y de la red del mismo sea 
+# http://servidor-jenkins:8080, no es necesario que edites nada, simplemente que ejecutes:
+
+  #> docker compose up
+
+# Sin embargo, si quieres cambiar el nombre para Jenkins, deberás seguir los siguientes pasos:
+
+# Exportar la variable de entorno NOMBRE_SERVIDOR a tu sesión de terminal, hemos dejado un 
+# archivo llamado nombre_servidor.txt en este repositorio para que puedas hacerlo fácilmente. 
+# También tendrás que usar el fichero override para Compose para aplicar los cambios necesarios:
+
+  #> echo "nuevo-nombre" > nombre-servidor.txt
+  #> export NOMBRE_SERVIDOR=$(cat nombre-servidor.txt)
+  #> docker compose -f docker-compose.yml -f docker-compose-cambio-nombre-servidor.yml up -d
+
+services:
+  servidor-jenkins:
+    image: tfg2asircanaveral2024/jenkins-casc:utilizable
+    ports:
+      - 8080:8080
+    hostname: ${NOMBRE_SERVIDOR:-servidor-jenkins}
+#    environment:
+       #- JENKINS_NOMBRE_ADMINISTRADOR=nombre-administrador
+       # lógicamente, no deberías escribir la contraseña en texto plano, sino usar una variable 
+       # de entorno
+       #- JENKINS_PASSWORD_ADMINISTRADOR=${PASSWORD_ADMINISTRADOR}
+    networks:
+      - red-1
+
+networks:
+  red-1:
+    driver: bridge

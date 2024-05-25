@@ -1,0 +1,8 @@
+services:
+  servidor-jenkins:
+    environment:
+      - NOMBRE_SERVIDOR=${NOMBRE_SERVIDOR:-servidor-jenkins}
+    networks:
+      red-1:
+        aliases:
+          - ${NOMBRE_SERVIDOR:-servidor-jenkins}
